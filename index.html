@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- displays site properly based on user's device -->
+
+	<link rel="icon" type="image/png" sizes="32x32" href="./images/favicon-32x32.png">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@700&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="css/style.css">
+	
+	<title>Frontend Mentor | Tip calculator app</title>
+	<link href="node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+	<div class="title">
+		<div>SPLI</div>
+		<div>TTER</div>
+	</div>
+
+	<form id="tipsCalculationForm">
+		<div class="content-container row">
+			<div class="content-container__left pe-5 col-md-6">
+				<div class="content-container__left--bill">
+					<p>Bill</p>
+					<div class="input-group">
+						<input id="bill" min="0" placeholder="0" class="content-container__left--money form-control focus-ring focus-ring-success" type="number">
+					</div>
+				</div>
+				<div class="content-container__left--tip">
+					<p>Select Tip %</p>
+					<div class="content-container__left--button-container">
+							<button type="button" value="5">5%</button>
+							<button type="button" value="10">10%</button>
+							<button type="button" value="15">15%</button>
+							<button type="button" value="25">25%</button>
+							<button type="button" value="50">50%</button>
+							<button type="button" id="custom" value="custom">Custom</button>
+							<input id="tips" min="0" placeholder="0" class="form-control focus-ring focus-ring-success" type="number">
+					</div>
+				</div>
+				<div class="content-container__left--people">
+					<p>Number of people<span>Can't be zero</span></p>
+					<div class="input-group">
+						<input id="people" min="0" placeholder="0" class="form-control focus-ring focus-ring-success" type="number">
+					</div>
+				</div>
+			</div>
+			<div class="content-container__right px-5 col-md-6 d-flex align-content-between flex-wrap">
+				<div class="content-container__right--information">
+					<div class="row">
+						<div class="content-container__right--text col-6">
+							<span>Tip Amount</span>
+							<p>/ person</p>
+						</div>
+							<div class="content-container__right--number col-6">
+								$<span id="tipPerPerson">0.00</span>
+							</div>
+						</div>
+					<div class="row">
+						<div class="content-container__right--text col-6">
+							<span>Total</span>
+							<p>/ person</p>
+						</div>
+						<div class="content-container__right--number col-6">
+							$<span id="totalPerPerson">0.00</span>
+						</div>
+					</div>
+				</div>
+				<button id="resetBtn" class="col-12">
+					Reset
+				</button>
+			</div>  
+		</div>
+	</form>
+	<div class="attribution">
+		Challenge by <a href="https://www.frontendmentor.io?ref=challenge" target="_blank">Frontend Mentor</a>. 
+	</div>
+	<script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+	<script src="node_modules/jquery/dist/jquery.slim.min.js"></script>
+	<script>
+		$(document).ready(function() {
+			let tipPercentage = -1;
+			let bill = 0;
+			let people = 0;
+
+			const calculate = () => {
+				if(bill && people >=1 && tipPercentage >= 0){
+					const totalPP = bill * (1 + tipPercentage/100) / people;
+					const tipPP = (bill * (1 + tipPercentage/100) - bill)/ people;
+					$("#tipPerPerson").text(tipPP.toFixed(2));
+					$("#totalPerPerson").text(totalPP.toFixed(2));
+					$("#resetBtn").addClass("content-container__right--active");
+				}
+			}
+
+			$("#resetBtn").on("click",function(){
+				$('#tipsCalculationForm').trigger("reset");
+			});
+
+			$("#tips").keyup(function(){tipPercentage = this.value;calculate();});
+			$("#bill").keyup(function(){
+				switch (this.value){
+					case "0":
+						$(this).val('');
+					break;
+					default:
+						bill = this.value;
+						calculate();
+				}	
+			});
+			$("#people").keyup(function(){	
+				people = this.value;
+				$("#people").removeClass("focus-ring-success focus-ring-danger");
+				$(".content-container__left--people span").hide();
+				switch (this.value){
+					case "0":
+						$("#people").addClass("focus-ring-danger");
+						$(".content-container__left--people span").show();
+						$(this).val('');
+					break;
+					default:
+						$("#people").addClass("focus-ring-success");
+						calculate();
+				}
+			});
+
+			$(".content-container__left--button-container button").on("click", function() {
+				$(".content-container__left--button-container button").removeClass("selected");
+				$("#custom").show();
+				$("#tips").hide();
+				$("#tips").val('');
+				switch(this.value){
+					case "custom":
+						$("#tips").show();
+						$("#custom").hide();
+						tipPercentage = -1;
+						break;
+					default:
+						$(this).addClass("selected");
+						tipPercentage = this.value;
+						calculate();
+				}
+			});
+		});
+	</script>
+</body>
+</html>
