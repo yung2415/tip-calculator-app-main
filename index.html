@@ -20,7 +20,7 @@
 	</div>
 
 	<form id="tipsCalculationForm">
-		<div class="content-container row">
+		<div class="content-container">
 			<div class="content-container__left pe-5 col-md-6">
 				<div class="content-container__left--bill">
 					<p>Bill</p>
@@ -68,7 +68,7 @@
 						</div>
 					</div>
 				</div>
-				<button id="resetBtn" class="col-12">
+				<button id="resetBtn" type="button" class="col-12">
 					Reset
 				</button>
 			</div>  
@@ -95,18 +95,35 @@
 				}
 			}
 
+			const clearResult = () => {
+				$("#tipPerPerson").text('0.00');
+				$("#totalPerPerson").text('0.00');
+			}
+
 			$("#resetBtn").on("click",function(){
 				$('#tipsCalculationForm').trigger("reset");
+				$(".content-container__left--button-container button").removeClass("selected");
+				$("#resetBtn").removeClass("content-container__right--active");
+				$(".content-container__left--people span").hide();
+				$("#custom").show();
+				$("#tips").hide();
+				$("#tips").val('');	
+				tipPercentage = -1;
+				bill = 0;
+				people = 0;
+				clearResult();
 			});
 
 			$("#tips").keyup(function(){tipPercentage = this.value;calculate();});
 			$("#bill").keyup(function(){
+				bill = this.value;
 				switch (this.value){
 					case "0":
+					case "":
 						$(this).val('');
+						clearResult();
 					break;
 					default:
-						bill = this.value;
 						calculate();
 				}	
 			});
@@ -116,9 +133,11 @@
 				$(".content-container__left--people span").hide();
 				switch (this.value){
 					case "0":
+					case "":
 						$("#people").addClass("focus-ring-danger");
 						$(".content-container__left--people span").show();
 						$(this).val('');
+						clearResult();
 					break;
 					default:
 						$("#people").addClass("focus-ring-success");
